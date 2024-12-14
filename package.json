@@ -10,8 +10,28 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
+    "@fortawesome/fontawesome-svg-core": "^6.7.1",
+    "@fortawesome/free-brands-svg-icons": "^6.7.1",
+    "@fortawesome/free-regular-svg-icons": "^6.7.1",
+    "@fortawesome/free-solid-svg-icons": "^6.7.1",
+    "@fortawesome/react-native-fontawesome": "^0.3.2",
+    "@react-native-community/datetimepicker": "github:react-native-datetimepicker/datetimepicker",
+    "@react-navigation/bottom-tabs": "^6.6.1",
+    "@react-navigation/native": "^6.1.18",
+    "expo": "^52.0.18",
+    "firebase": "^11.1.0",
+    "json-server": "^1.0.0-beta.3",
     "react": "18.3.1",
-    "react-native": "0.76.5"
+    "react-native": "0.76.5",
+    "react-native-geolocation-service": "^5.3.1",
+    "react-native-maps": "^1.20.1",
+    "react-native-safe-area-context": "^5.0.0",
+    "react-native-screens": "^4.3.0",
+    "react-native-svg": "^15.10.1",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-virtualized-view": "^1.0.0",
+    "react-native-webview": "^13.12.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

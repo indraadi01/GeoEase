@@ -1,0 +1,74 @@
+[
+  {
+    "no": 1,
+    "nama": "RS Kraton",
+    "deskripsi": "Rumah Sakit",
+    "tanggal": "14/12/2024",
+    "waktu": 17.45,
+    "lokasi": "-6.881519380758965, 109.66753863129854"
+  },
+  {
+    "no": 2,
+    "nama": "RS Bendan",
+    "deskripsi": "Rumah Sakit",
+    "tanggal": "13/12/2024",
+    "waktu": "09.15",
+    "lokasi": "-6.89147676316304, 109.66151149051143"
+  },
+  {
+    "no": 3,
+    "nama": "RS Budi Rahayu",
+    "deskripsi": "Rumah Sakit",
+    "tanggal": "12/12/2024",
+    "waktu": "07.30",
+    "lokasi": "-6.880584132951866, 109.67167048563518"
+  },
+  {
+    "no": 4,
+    "nama": "RS Siti Khodijah",
+    "deskripsi": "Rumah Sakit",
+    "tanggal": "11/12/2024",
+    "waktu": 12.55,
+    "lokasi": "-6.886263851431459, 109.6768182067988"
+  },
+  {
+    "no": 5,
+    "nama": "RSI Muhi Pekajangan",
+    "deskripsi": "Rumah Sakit",
+    "tanggal": "10/12/2024",
+    "waktu": 14.4,
+    "lokasi": "-6.954489850098288, 109.65016967793953"
+  },
+  {
+    "no": 6,
+    "nama": "Polsek Pekalongan Utara",
+    "deskripsi": "Kantor Polisi",
+    "tanggal": "09/12/2024",
+    "waktu": 11.4,
+    "lokasi": "-6.866627339478452, 109.67884270199015"
+  },
+  {
+    "no": 7,
+    "nama": "Polsek Pekalongan Selatan",
+    "deskripsi": "Kantor Polisi",
+    "tanggal": "08/12/2024",
+    "waktu": 15.17,
+    "lokasi": "-6.928712399999976, 109.67959213376558"
+  },
+  {
+    "no": 8,
+    "nama": "Polsek Pekalongan Timur",
+    "deskripsi": "Kantor Polisi",
+    "tanggal": "07/12/2024",
+    "waktu": 18.2,
+    "lokasi": "-6.885720048530559, 109.6755725068065"
+  },
+  {
+    "no": 9,
+    "nama": "Polsek Pekalongan Barat",
+    "deskripsi": "Kantor Polisi",
+    "tanggal": "06/12/2024",
+    "waktu": 10.3,
+    "lokasi": "-6.890498854027659, 109.6600250626091"
+  }
+]
