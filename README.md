@@ -1,79 +1,72 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 🌍 GeoEase
 
-# Getting Started
+GeoEase adalah aplikasi inovatif yang dirancang untuk memudahkan proses penginputan data survei lapangan, khususnya di area kajian Kota Pekalongan. Aplikasi ini memungkinkan pengguna untuk secara langsung mengonversi data survei ke dalam format digital yang akurat, serta menampilkan lokasi titik survei dengan bantuan peta interaktif. Fitur unggulan GeoEase mencakup menu edit data yang memudahkan pengguna dalam mengupdate atau mengoreksi informasi yang telah dimasukkan. Sebagai contoh, aplikasi ini dapat digunakan untuk survei fasilitas umum seperti rumah sakit dan kantor polisi, memberikan informasi yang lebih terstruktur dan mudah diakses untuk keperluan analisis dan perencanaan. Dengan GeoEase, proses pengumpulan dan pengelolaan data survei menjadi lebih efisien dan akurat.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+# ✨ Fitur Utama:
 
-## Step 1: Start the Metro Server
+🗺 Inventarisasi data survey lapangan menjadi digital yang terintegrasi.
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+➕ Penambahan titik data survey lapangan berdasarkan lokasi pengguna yang terakses internet.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+📊 Pengelolaan data survey lapangan dan visualisasi hasil survey dalam sebuah peta interaktif.
 
-```bash
-# using npm
-npm start
+# 🛠 Komponen Pembangun Produk
 
-# OR using Yarn
-yarn start
-```
+### *1. Antarmuka Pengguna (Frontend)*
 
-## Step 2: Start your Application
+- HTML: Struktur dokumen dan elemen UI seperti form dan tombol.
+- CSS: Gaya dan tata letak, termasuk animasi dan efek visual.
+- JavaScript: Logika interaktif untuk peta, formulir, dan integrasi API.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+### *2. Library dan Framework*
 
-### For Android
+- React Native: Mengembangkan aplikasi mobile dengan kode yang dapat berjalan di berbagai platform.
+- Leaflet.js: Library JavaScript untuk peta interaktif.
+- Fetch API: Untuk komunikasi antara frontend dan backend.
+- FontAwesome: Sebagai penyedia ikon sehingga aplikasi terlihat lebih menarik.
 
-```bash
-# using npm
-npm run android
+### *3. Backend*
 
-# OR using Yarn
-yarn android
-```
+- Endpoint API: Berbasis REST untuk mengelola data survey yang disimpann dalam file 'geoease.json'.
+  - *POST /geoease*: Menambahkan data survey baru.
+  - *GET /geoease*: Mengambil data survey yang telah ada.
 
-### For iOS
+### *4. Sumber Data*
 
-```bash
-# using npm
-npm run ios
+- Data Titik Survey (Yang Sudah Ada): Shapefile fasilitas umum Kota Pekalongan.
+- data Titik Survey (Yang Belum Ada): Hasil penambahan titik data survey lapangan.
 
-# OR using Yarn
-yarn ios
-```
+# 🖼 Tangkapan Layar Komponen Penting Produk #
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### *1. Home/List*
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+🏠 Halaman utama untuk menampilkan data survey yang telah ada.
 
-## Step 3: Modifying your App
+<img src="Image/Home.png" alt="Halaman Home" width="250px">
 
-Now that you have successfully run the app, let's modify it.
+### *2. Tambah Data*
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+📋 Form untuk mengisikan data survey lapangan baru dengan memanfaatkan geolocation untuk mendapatkan posisi akurat dari pengguna.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+<img src="Image/Tambah1.png" alt="Tambah Data1" width="250px">
+<img src="Image/Tambah2.png" alt="Tambah Data2" width="250px">
+<img src="Image/Tambah3.png" alt="Tambah Data3" width="250px">
+<img src="Image/Tambah4.png" alt="Tambah Data4" width="250px">
 
-## Congratulations! :tada:
+### *3. Map*
 
-You've successfully run and modified your React Native App. :partying_face:
+🗺 Menampilkan peta interaktif yang menampilkan data survey lapangan yang telah ada serta titik data survey lapangan yang baru ditambahkan beserta informasi pop up dari atribut data.
 
-### Now what?
+<img src="Image/Map1.png" alt="Map1" width="250px">
+<img src="Image/Map2.png" alt="Map2" width="250px">
+<img src="Image/Map3.png" alt="Map3" width="250px">
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+### *4. Edit Data*
 
-# Troubleshooting
+✏ Menyediakan formulir untuk mengedit data survey lapangan yang sudah ada untuk nama, deskripsi, tanggal, waktu dan lokasi yang bisa mengambil geolocation baru atau mengisikan koordinat secara manual.
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+<img src="Image/Edit1.png" alt="Edit1" width="250px">
+<img src="Image/Edit2.png" alt="Edit2" width="250px">
+<img src="Image/Edit3.png" alt="Edit3" width="250px">
+<img src="Image/Edit4.png" alt="Edit4" width="250px">
+<img src="Image/Edit5.png" alt="Edit5" width="250px">
