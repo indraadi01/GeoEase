@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMapMarkerAlt, faClock, faCalendar, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const Listdata = () => {
-  const jsonUrl = 'http://192.168.112.52:3000/geoease'; // URL untuk data
+  const jsonUrl = 'http://192.168.48.52:3000/geoease'; // URL untuk data
   const [isLoading, setLoading] = useState(true);
   const [dataUser, setDataUser] = useState([]);
   const [refresh, setRefresh] = useState(false);

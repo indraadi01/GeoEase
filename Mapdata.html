@@ -34,7 +34,7 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        const jsonUrl = 'http://192.168.112.52:3000/geoease';
+        const jsonUrl = 'http://192.168.48.52:3000/geoease';
 
         async function fetchData() {
             try {
@@ -52,12 +52,18 @@
                 data.forEach(item => {
                     const lokasi = item.lokasi.split(',').map(coord => parseFloat(coord.trim()));
                     L.marker(lokasi).addTo(map)
-                        .bindPopup(`<strong>Nama : ${item.nama}</strong><br> Deskripsi : ${item.deskripsi}<br>Tanggal : ${item.tanggal}<br>Waktu : ${item.waktu}<br> Lokasi : <br>${item.lokasi}`);
+                        .bindPopup(`
+                            <strong>Nama : ${item.nama}</strong><br> 
+                            Deskripsi : ${item.deskripsi}<br>
+                            Tanggal : ${item.tanggal}<br>
+                            Waktu : ${item.waktu}<br>
+                            Lokasi : <br>${item.lokasi}<br>
+                            <a href="https://www.google.com/maps?q=${lokasi[0]},${lokasi[1]}" target="_blank">Navigasi ke lokasi</a>
+                        `);
                 });
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
-
         }
 
         // Initial load

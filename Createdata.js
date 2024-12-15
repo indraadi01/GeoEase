@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const Createdata = () => {
     const navigation = useNavigation();
-    const jsonUrl = 'http://192.168.112.52:3000/geoease';
+    const jsonUrl = 'http://192.168.48.52:3000/geoease';
     const [nama, setNama] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [tanggal, setTanggal] = useState(new Date());

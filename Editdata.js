@@ -8,7 +8,7 @@ import Geolocation from '@react-native-community/geolocation';
 
 
 const Editdata = () => {
-    const jsonUrl = 'http://192.168.112.52:3000/geoease'; // URL data
+    const jsonUrl = 'http://192.168.48.52:3000/geoease'; // URL data
     const [nama, setNama] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [tanggal, setTanggal] = useState('');
