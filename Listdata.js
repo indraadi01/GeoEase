@@ -1,47 +1,67 @@
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, Linking } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMapMarkerAlt, faClock, faCalendar, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const Listdata = () => {
-  const jsonUrl = 'http://10.0.2.2:3000/geoease'; // URL untuk data yang dibuat di CreateData
+  const jsonUrl = 'http://192.168.112.52:3000/geoease'; // URL untuk data
   const [isLoading, setLoading] = useState(true);
   const [dataUser, setDataUser] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    fetch(jsonUrl)
-      .then((response) => response.json())
-      .then((json) => {
-        setDataUser(json); // Sesuaikan struktur data
-      })
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-  }, [refresh]);
+    fetchData();
+  }, []);
 
-  function refreshPage() {
+  const fetchData = () => {
+    setLoading(true);
     fetch(jsonUrl)
       .then((response) => response.json())
       .then((json) => setDataUser(json))
-      .catch((error) => console.error(error));
-  }
+      .catch((error) => {
+        console.error(error);
+        Alert.alert('Error', 'Gagal memuat data.');
+      })
 
-  function deleteData(id) {
-    fetch(jsonUrl + '/' + id, {
+      .finally(() => setLoading(false));
+  };
+
+  const refreshPage = () => {
+    setRefresh(true);
+    fetch(jsonUrl)
+      .then((response) => response.json())
+      .then((json) => setDataUser(json))
+      .catch((error) => console.error(error))
+      .finally(() => setRefresh(false));
+  };
+
+  const deleteData = (id) => {
+    fetch(`${jsonUrl}/${id}`, {
       method: 'DELETE',
     })
-      .then((response) => response.json())
-      .then(() => {
-        alert('Data terhapus');
-        refreshPage();
-      });
-  }
+      .then((response) => {
+        if (response.ok) {
+          Alert.alert('Sukses', 'Data berhasil dihapus.');
+          fetchData();
+        } else {
+          throw new Error('Gagal menghapus data');
+        }
+      })
+      .catch((error) => Alert.alert('Error', error.message));
+  };
+
+  const openLocation = (location) => {
+    const url = `https://www.google.com/maps/search/?api=1&query=${location}`;
+    Linking.openURL(url).catch(() =>
+      Alert.alert('Error', 'Gagal membuka lokasi. Pastikan Google Maps terinstal.')
+    );
+  };
 
   return (
     <SafeAreaView>
       {isLoading ? (
-        <View style={{ alignItems: 'center', marginTop: 20 }}>
+        <View style={styles.center}>
           <Text style={styles.cardtitle}>Loading...</Text>
         </View>
       ) : (
@@ -51,10 +71,10 @@ const Listdata = () => {
             data={dataUser}
             onRefresh={refreshPage}
             refreshing={refresh}
-            keyExtractor={({ id }) => id.toString()}
+            keyExtractor={({ id }) => (id ? id.toString() : Math.random().toString())} // Fallback untuk key
             renderItem={({ item }) => (
               <View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => openLocation(item.lokasi)}>
                   <View style={styles.card}>
                     <View>
                       <Text style={styles.cardtitle}>Nama: {item.nama}</Text>
@@ -89,6 +109,10 @@ const Listdata = () => {
 };
 
 const styles = StyleSheet.create({
+  center: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
   cardtitle: {
     fontSize: 14,
     fontWeight: 'bold',
@@ -104,7 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.20,
+    shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
     marginHorizontal: 20,

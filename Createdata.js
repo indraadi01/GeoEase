@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, ScrollView, TextInput, Button, StyleSheet, Text, Platform, PermissionsAndroid, TouchableOpacity, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCalendar, faClock, faLocationCrosshairs, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
 
 const Createdata = () => {
     const navigation = useNavigation();
-    const jsonUrl = 'http://10.0.2.2:3000/geoease';
+    const jsonUrl = 'http://192.168.112.52:3000/geoease';
     const [nama, setNama] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [tanggal, setTanggal] = useState(new Date());
     const [waktu, setWaktu] = useState(new Date());
     const [lokasi, setLokasi] = useState('');
+    const [longitude, setLongitude] = useState(null);
+    const [latitude, setLatitude] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -28,6 +30,8 @@ const Createdata = () => {
             tanggal: formattedTanggal,
             waktu: formattedWaktu,
             lokasi: lokasi,
+            longitude: longitude || 0, // Default value jika tidak tersedia
+            latitude: latitude || 0, // Default value jika tidak tersedia
         };
 
         fetch(jsonUrl, {
@@ -52,6 +56,8 @@ const Createdata = () => {
                 setTanggal(new Date());
                 setWaktu(new Date());
                 setLokasi('');
+                setLongitude(null);
+                setLatitude(null);
             });
     };
 
@@ -77,14 +83,16 @@ const Createdata = () => {
             Geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
-                    setLokasi(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                    setLokasi(`${latitude}, ${longitude}`);
+                    setLatitude(latitude);
+                    setLongitude(longitude);
                 },
                 (error) => {
                     console.error(error);
                     alert('Unable to fetch location');
                 },
                 {
-                    enableHighAccuracy: true,
+                    enableHighAccuracy: false,
                     timeout: 15000,
                     maximumAge: 10000
                 }
@@ -178,6 +186,7 @@ const Createdata = () => {
         </SafeAreaView>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {

@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native'; // Add Image import here
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { WebView } from 'react-native-webview';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faDatabase, faPenToSquare, faStreetView, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Createdata from './Createdata';
 import Listdata from './Listdata';
 import Editdata from './Editdata';
-import Mapdata from './Mapdata'
-
+const webmap = require('./Mapdata.html');
 
 function HomeScreen() {
   return <Listdata />;
@@ -18,8 +18,12 @@ function CreateScreen() {
   return <Createdata />;
 }
 
-function WebScreen() {
-  return <Listdata />;
+function MapsScreen() {
+  return (
+    <WebView
+      source={webmap}
+    />
+  );
 }
 
 function EditScreen() {
@@ -30,6 +34,11 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [showAddButton, setShowAddButton] = React.useState(true);
+
+  // Debugging: log when focus or blur happens
+  React.useEffect(() => {
+    console.log("showAddButton: ", showAddButton);
+  }, [showAddButton]);
 
   return (
     <NavigationContainer>
@@ -51,7 +60,19 @@ export default function App() {
           name="List"
           component={HomeScreen}
           options={{
-            headerShown: false,
+            headerShown: true,
+            headerTitle: () => (
+              <View style={styles.headerTitleContainer}>
+                <Image
+                  source={require('./assets/iconGeoEase.png')} // Path ke gambar
+                  style={styles.iconStyle}
+                />
+                <View style={styles.headerTextContainer}>
+                  <Text style={styles.headerTitle}>GeoEase</Text>
+                  <Text style={styles.subHeader}>make surveys easier</Text>
+                </View>
+              </View>
+            ),
             tabBarIcon: ({ color }) => (
               <FontAwesomeIcon icon={faDatabase} color={color} size={25} />
             ),
@@ -62,16 +83,25 @@ export default function App() {
           name="Tambah Data"
           component={CreateScreen}
           listeners={{
-            focus: () => setShowAddButton(false), // Sembunyikan tombol saat masuk ke halaman
-            blur: () => setShowAddButton(true),  // Tampilkan tombol saat keluar dari halaman
+            focus: () => {
+              console.log("Focus on 'Tambah Data' tab");
+              setShowAddButton(true); // Tampilkan tombol saat masuk ke halaman 'Tambah Data'
+            },
+            blur: () => {
+              console.log("Blur from 'Tambah Data' tab");
+              setShowAddButton(true); // Tampilkan tombol saat keluar dari halaman 'Tambah Data'
+            },
           }}
           options={{
-            headerShown: true,
+            headerShown: false,
             tabBarButton: (props) =>
               showAddButton && (
                 <TouchableOpacity
                   style={styles.addButtonIcon}
-                  onPress={props.onPress}
+                  onPress={() => {
+                    console.log("Tambah Data button pressed");
+                    props.onPress();
+                  }}
                 >
                   <FontAwesomeIcon icon={faCirclePlus} color="#000" size={60} />
                 </TouchableOpacity>
@@ -81,7 +111,17 @@ export default function App() {
 
         <Tab.Screen
           name="Peta"
-          component={WebScreen}
+          component={MapsScreen}
+          listeners={{
+            focus: () => {
+              console.log("Focus on 'Peta' tab");
+              setShowAddButton(false); // Sembunyikan tombol saat masuk ke halaman 'Peta'
+            },
+            blur: () => {
+              console.log("Blur from 'Peta' tab");
+              setShowAddButton(true); // Tampilkan tombol saat keluar dari halaman 'Peta'
+            },
+          }}
           options={{
             headerShown: false,
             tabBarIcon: ({ color }) => (
@@ -93,6 +133,16 @@ export default function App() {
         <Tab.Screen
           name="Edit Data"
           component={EditScreen}
+          listeners={{
+            focus: () => {
+              console.log("Focus on 'Edit Data' tab");
+              setShowAddButton(false); // Sembunyikan tombol saat masuk ke halaman 'Peta'
+            },
+            blur: () => {
+              console.log("Blur from 'Edit Data' tab");
+              setShowAddButton(true); // Tampilkan tombol saat keluar dari halaman 'Peta'
+            },
+          }}
           options={{
             headerShown: true,
             tabBarIcon: ({ color }) => (
@@ -118,6 +168,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     bottom: 55,
-    right: '43%',
+    right: '9%',
+  },
+  headerTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  headerTextContainer: {
+    marginLeft: 10, // Just for spacing
+  },
+  headerTitle: {
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
+  subHeader: {
+    fontSize: 12,
+    marginTop: 2,
+    color: '#888',
+  },
+  iconStyle: {
+    width: 50,
+    height: 50,
   },
 });

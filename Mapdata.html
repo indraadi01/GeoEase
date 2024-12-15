@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Interaktif dengan Marker dan Form Input</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        #form-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f0f0f0;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            z-index: 1000;
+            width: 80%;
+            max-width: 500px;
+            /* Lebarkan lebar form */
+            overflow-y: auto;
+            max-height: 80%;
+            border: 2px solid #1e90ff;
+        }
+
+        #form-popup h2 {
+            margin-top: 0;
+            color: #1e90ff;
+            text-align: center;
+        }
+
+        #close-button {
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #close-button:hover {
+            background-color: #4682b4;
+        }
+
+        #dim-background {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        #add-point-btn {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e90ff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #add-point-btn:hover {
+            background: #4682b4;
+        }
+
+        #refresh-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: #1e90ff;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        #refresh-btn:hover {
+            background: #4682b4;
+        }
+
+        #mahasiswaForm input {
+            width: calc(100% - 20px);
+            /* Memperlebar input form */
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #1e90ff;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #f0f0f0;
+        }
+
+        /* Form buttons layout */
+        #mahasiswaForm button {
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            /* Berikan jarak antar tombol */
+        }
+
+        #mahasiswaForm button:hover {
+            background-color: #4682b4;
+        }
+
+        /* Wrap buttons side by side */
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            /* Menempatkan tombol di kanan */
+            gap: 10px;
+            /* Memberi jarak antar tombol */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="dim-background"></div>
+    <button id="add-point-btn">Tambah Titik Survey</button>
+    <button id="refresh-btn">🔄</button>
+    <div id="map"></div>
+
+    <div id="form-popup">
+        <h2>Tambah Data Survey</h2>
+        <form id="dataForm">
+            <input type="text" id="nama" placeholder="Isikan Nama" required />
+            <input type="text" id="deskripsi" placeholder="Isikan Deskripsi" required />
+            <input type="text" id="tanggal" placeholder="Isikan Tanggal" required />
+            <input type="text" id="waktu" placeholder="Isikan Waktu" required />
+            <input type="text" id="lokasi" placeholder="Ambil Koordinat Lokasi" required />
+            <input type="hidden" id="latitude" />
+            <input type="hidden" id="longitude" />
+            <div class="button-container">
+                <button type="submit">Tambah Data</button>
+                <button type="button" id="close-button">Tutup</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        var map = L.map('map').setView([-7.774796670378405, 110.37442978811552], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18
+        }).addTo(map);
+
+        var formPopup = document.getElementById('form-popup');
+        var dimBackground = document.getElementById('dim-background');
+        var closeButton = document.getElementById('close-button');
+        var addPointBtn = document.getElementById('add-point-btn');
+        var refreshBtn = document.getElementById('refresh-btn');
+        var marker = null;
+
+        closeButton.addEventListener('click', function () {
+            formPopup.style.display = 'none';
+            dimBackground.style.display = 'none';
+        });
+
+        addPointBtn.addEventListener('click', function () {
+            if (!marker) {
+                marker = L.marker(map.getCenter(), { draggable: true }).addTo(map);
+                marker.bindPopup('Geser marker ke lokasi yang diinginkan, lalu klik marker untuk menambahkan data.').openPopup();
+                marker.on('click', function () {
+                    var latLng = marker.getLatLng();
+                    document.getElementById('latitude').value = latLng.lat;
+                    document.getElementById('longitude').value = latLng.lng;
+                    document.getElementById('lokasi').value = latLng.lat + ", " + latLng.lng;
+                    formPopup.style.display = 'block';
+                    dimBackground.style.display = 'block';
+                });
+            }
+        });
+
+        document.getElementById('dataForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    // Ambil data dari form
+    var Nama = document.getElementById('nama').value;
+    var Deskripsi = document.getElementById('deskripsi').value;
+    var Tanggal = document.getElementById('tanggal').value;
+    var Waktu = document.getElementById('waktu').value;
+    var Lokasi = document.getElementById('lokasi').value;
+    var latitude = document.getElementById('latitude').value;
+    var longitude = document.getElementById('longitude').value;
+
+    // Buat objek data baru
+    var newData = {
+        id: new Date().getTime().toString(), // Generate unique ID
+        nama: Nama,
+        deskripsi: Deskripsi,
+        tanggal: Tanggal,
+        waktu: Waktu,
+        lokasi: Lokasi,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude)
+    };
+
+    console.log('Mengirim data ke server:', newData);
+
+    // Kirim data ke server
+    fetch('http://192.168.112.52:3000/geoease', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newData)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Gagal mengirim data: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data berhasil dikirim ke server:', data);
+
+            // Tambahkan marker ke peta
+            L.marker([latitude, longitude]).addTo(map)
+                .bindPopup(`
+                    <strong>${Nama} </strong><br>
+                    ${Deskripsi}<br>${Tanggal}<br>
+                    ${Waktu}<br>
+                `)
+                .openPopup();
+
+            // Reset form
+            document.getElementById('dataForm').reset();
+            formPopup.style.display = 'none';
+            dimBackground.style.display = 'none';
+
+            if (marker) {
+                marker.remove(); // Hapus marker sementara
+                marker = null;
+            }
+        })
+        .catch(error => {
+            console.error('Terjadi kesalahan saat mengirim data:', error);
+        });
+});
+
+
+
+function loadData() {
+    console.log('Memuat data dari server...');
+    fetch('http://192.168.112.52:3000/geoease', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Gagal memuat data: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data yang diterima dari server:', data);
+
+            // Bersihkan marker lama di peta
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // Tambahkan marker dari data yang diterima
+            if (data && Array.isArray(data.geoease)) {
+                data.geoease.forEach(geoease => {
+                    var koordinat = geoease.lokasi.split(", ");
+                    var latitude = parseFloat(koordinat[0]);
+                    var longitude = parseFloat(koordinat[1]);
+
+                    L.marker([latitude, longitude]).addTo(map)
+                        .bindPopup(`
+                            <strong>${geoease.nama}</strong><br>
+                            ${geoease.deskripsi}<br>
+                            ${geoease.tanggal}<br>
+                            ${geoease.waktu}<br>
+                        `);
+                });
+            } else {
+                console.error('Format data dari server tidak sesuai.');
+            }
+        })
+        .catch(error => {
+            console.error('Terjadi kesalahan saat memuat data:', error);
+        });
+}
+
+    </script>
+</body>
+
+</html>

@@ -4,10 +4,11 @@ import { ScrollView } from 'react-native-virtualized-view';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMapMarkerAlt, faClock, faCalendar } from '@fortawesome/free-solid-svg-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
+
 
 const Editdata = () => {
-    const jsonUrl = 'http://10.0.2.2:3000/geoease'; // URL data
+    const jsonUrl = 'http://192.168.112.52:3000/geoease'; // URL data
     const [nama, setNama] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [tanggal, setTanggal] = useState('');
@@ -19,6 +20,8 @@ const Editdata = () => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [refresh, setRefresh] = useState(false);
+    const [latitude, setLatitude] = useState(null); // State untuk latitude
+const [longitude, setLongitude] = useState(null); // State untuk longitude
 
     useEffect(() => {
         fetch(jsonUrl)
@@ -29,10 +32,12 @@ const Editdata = () => {
     }, []);
 
     const refreshPage = () => {
+        setRefresh(true);
         fetch(jsonUrl)
             .then((response) => response.json())
             .then((json) => setDataList(json))
-            .catch((error) => console.error(error));
+            .catch((error) => console.error(error))
+            .finally(() => setRefresh(false));
     };
 
     const selectItem = (item) => {
@@ -51,8 +56,10 @@ const Editdata = () => {
             tanggal,
             waktu,
             lokasi,
+            latitude, // Tambahkan latitude ke data
+            longitude, // Tambahkan longitude ke data
         };
-
+    
         fetch(`${jsonUrl}/${selectedItem.id}`, {
             method: 'PATCH',
             headers: {
@@ -64,14 +71,19 @@ const Editdata = () => {
             .then((response) => response.json())
             .then(() => {
                 alert('Data berhasil diperbarui');
-                setNama('');
-                setDeskripsi('');
-                setTanggal('');
-                setWaktu('');
-                setLokasi('');
+                resetForm();
                 refreshPage();
             })
             .catch((error) => console.error(error));
+    };
+
+    const resetForm = () => {
+        setNama('');
+        setDeskripsi('');
+        setTanggal('');
+        setWaktu('');
+        setLokasi('');
+        setSelectedItem({});
     };
 
     const handleGetLocation = async () => {
@@ -80,11 +92,11 @@ const Editdata = () => {
                 const granted = await PermissionsAndroid.request(
                     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
                     {
-                        title: "Permission to Access Location",
-                        message: "We need access to your location",
-                        buttonNeutral: "Ask Me Later",
-                        buttonNegative: "Cancel",
-                        buttonPositive: "OK",
+                        title: 'Permission to Access Location',
+                        message: 'We need access to your location',
+                        buttonNeutral: 'Ask Me Later',
+                        buttonNegative: 'Cancel',
+                        buttonPositive: 'OK',
                     }
                 );
                 if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
@@ -92,18 +104,20 @@ const Editdata = () => {
                     return;
                 }
             }
-
+    
             Geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
-                    setLokasi(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                    setLatitude(latitude); // Simpan latitude
+                    setLongitude(longitude); // Simpan longitude
+                    setLokasi(`${latitude}, ${longitude}`); // Gabungkan lokasi untuk tampilan
                 },
                 (error) => {
                     console.error(error);
                     alert('Unable to fetch location');
                 },
                 {
-                    enableHighAccuracy: true,
+                    enableHighAccuracy: false,
                     timeout: 15000,
                     maximumAge: 10000
                 }
@@ -123,7 +137,6 @@ const Editdata = () => {
                     </View>
                 ) : (
                     <View style={{ flex: 1 }}>
-                        {/* <Text style={styles.title}>Edit Data</Text> */}
                         <View style={styles.form}>
                             <TextInput
                                 style={styles.input}
@@ -184,9 +197,9 @@ const Editdata = () => {
                             <View style={styles.inputContainer}>
                                 <TextInput
                                     style={styles.inputWithIcon}
-                                    placeholder="Lokasi"
+                                    placeholder="Lokasi (Koordinat)"
                                     value={lokasi}
-                                    editable={false}
+                                    onChangeText={setLokasi} // Allow manual input
                                 />
                                 <TouchableOpacity onPress={handleGetLocation} style={styles.iconContainer}>
                                     <FontAwesomeIcon icon={faMapMarkerAlt} size={15} />
@@ -229,14 +242,6 @@ const Editdata = () => {
 };
 
 const styles = StyleSheet.create({
-    title: {
-        paddingVertical: 12,
-        backgroundColor: '#333',
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
     form: {
         padding: 10,
         marginBottom: 15,
@@ -257,7 +262,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#777',
         borderRadius: 8,
-        paddingLeft: 30, // Space for the icon inside the input
+        paddingLeft: 30,
         padding: 8,
         marginVertical: 5,
         width: '100%',
@@ -268,27 +273,28 @@ const styles = StyleSheet.create({
         top: '30%',
     },
     button: {
-        marginVertical: 10,
+        backgroundColor: 'green',
+        color: 'white',
+        borderRadius: 8,
+    },
+    divider: {
+        borderBottomColor: '#ddd',
+        borderBottomWidth: 1,
+        marginBottom: 10,
     },
     card: {
-        padding: 20,
-        margin: 10,
         backgroundColor: '#fff',
-        borderRadius: 10,
-        elevation: 2,
+        padding: 10,
+        marginVertical: 5,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ddd',
     },
     cardTitle: {
-        fontSize: 16,
         fontWeight: 'bold',
     },
     cardContent: {
-        fontSize: 12,
-        marginVertical: 3,
-    },
-    divider: {
-        height: 1,
-        backgroundColor: '#ddd',
-        marginVertical: 10,
+        marginTop: 5,
     },
 });
 
